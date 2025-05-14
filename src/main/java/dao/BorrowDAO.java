@@ -34,6 +34,7 @@ public class BorrowDAO {
                 if (generatedKeys.next()) {
                     borrow.setBorrowId(generatedKeys.getInt(1));
                     System.out.println("BorrowDAO: Borrow created, borrowId = " + borrow.getBorrowId());
+                    decrementBookCopyIfAvailable(borrow.getBookId());
                 } else {
                     throw new SQLException("Creating borrow failed.");
                 }
@@ -85,7 +86,7 @@ public class BorrowDAO {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, borrow.getBorrowId());
             stmt.executeUpdate();
-
+            incrementBookCopy(borrow.getBookId());
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -127,4 +128,37 @@ public class BorrowDAO {
         return null;
     }
 
+    private void decrementBookCopyIfAvailable(int bookId) throws SQLException {
+        String sql = "UPDATE book SET totalCopies = totalCopies - 1 WHERE bookid = ? AND totalCopies > 0";
+
+        try (Connection conn = DBConnection.getDbConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, bookId);
+            int affectedRows = ps.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Cannot borrow book: No copies available.");
+            }
+
+            System.out.println("BorrowDAO: Decremented totalCopies for bookId = " + bookId);
+        }
+    }
+
+    private static void incrementBookCopy(int bookId) throws SQLException {
+        String sql = "UPDATE book SET totalCopies = totalCopies + 1 WHERE bookid = ?";
+
+        try (Connection conn = DBConnection.getDbConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, bookId);
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new SQLException("Failed to increase totalCopies: Book not found with id = " + bookId);
+            }
+
+            System.out.println("BorrowDAO: Incremented totalCopies for bookId = " + bookId);
+        }
+    }
 }

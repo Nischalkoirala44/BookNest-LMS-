@@ -496,10 +496,8 @@
             font-size: 14px;
             font-weight: 500;
             transition: background-color 0.3s;
-        }
-
-        .borrow-btn:hover {
-            background-color: var(--primary-hover);
+            border: none;
+            cursor: pointer;
         }
 
         .disabled-btn {
@@ -529,19 +527,6 @@
             transition: all 0.3s;
         }
 
-        .borrow-btn {
-            background: none;
-            border: none;
-            color: #007bff; /* or your link color */
-            cursor: pointer;
-            text-decoration: underline;
-            padding: 0;
-            font: inherit;
-        }
-
-        .borrow-btn:hover {
-            color: #0056b3; /* darker shade for hover */
-        }
 
         .disabled-btn {
             color: #6c757d;
