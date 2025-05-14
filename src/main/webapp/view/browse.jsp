@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="dao.BookDAO,model.Book,model.User,java.util.List,java.util.Objects" %>
+<%@ include file="nav-bar.jsp" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -868,42 +869,7 @@
     </style>
 </head>
 <body>
-<!-- Navigation Bar -->
-<nav class="navbar">
-    <div class="nav-container">
-        <div class="logo">
-            <h1><span>Book</span> Nest</h1>
-        </div>
-        <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">☰</button>
-        <ul class="nav-links">
-            <li><a href="home.jsp">Home</a></li>
-            <li><a href="browse.jsp" class="active">Browse</a></li>
-            <li><a href="view-Borrowed.jsp">My Books</a></li>
-        </ul>
-        <div class="user-actions">
-            <div class="user-profile" id="userProfileToggle" aria-haspopup="true" aria-expanded="false">
-                <% User user = (User) session.getAttribute("user"); %>
-                <div class="user-avatar">
-                    <% if (user != null && user.getProfilePicture() != null && user.getProfilePicture().length > 0) { %>
-                    <img src='${pageContext.request.contextPath}/ProfileImageServlet?userId=<%= user.getUserId() %>' alt='Profile Image' />
-                    <% } else if (user != null) { %>
-                    <%= user.getName().charAt(0) %>
-                    <% } else { %>
-                    G
-                    <% } %>
-                </div>
-                <div class="user-name"><%= user != null && user.getName() != null ? user.getName() : "Guest" %></div>
-                <div class="dropdown-menu" id="userDropdown">
-                    <ul>
-                        <li><a href="#" id="viewProfileBtn">View Profile</a></li>
-                        <li><a href="view-Borrowed.jsp">My Books</a></li>
-                        <li class="logout"><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
+
 
 <!-- Main Content -->
 <div class="main-content">

@@ -34,6 +34,6 @@ public class BookReturnServlet extends HttpServlet {
         }
 
         // Redirect to borrowed books page after return
-        response.sendRedirect("view/view-Borrowed.jsp");
+        response.sendRedirect("view/browse.jsp");
     }
 }
