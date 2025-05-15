@@ -578,7 +578,6 @@
 </div>
 
 <!-- Reviews Modal -->
-<!-- Reviews Modal -->
 <div class="modal <%= request.getAttribute("showModal") != null && (Boolean)request.getAttribute("showModal") ? "active" : "" %>" id="reviewsModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -594,7 +593,11 @@
                     for (model.Review review : reviews) {
             %>
             <div class="review-item">
-                <div class="review-comment"><%= review.getComment() != null ? review.getComment().replaceAll("[<>\"&]", "") : "" %></div>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <img src='${pageContext.request.contextPath}/ProfilePictureServlet?reviewId=<%= review.getReviewId() %>' alt='Profile Image' style="height: 50px; width: 50px; border-radius: 50%;" />
+                    <div class="review-author"><%= review.getName() != null ? review.getName().replaceAll("[<>\"&]", "") : "" %></div>
+                </div>
+                <div class="review-comment" style="margin-top: 12px;"><%= review.getComment() != null ? review.getComment().replaceAll("[<>\"&]", "") : "" %></div>
             </div>
             <%
                 }

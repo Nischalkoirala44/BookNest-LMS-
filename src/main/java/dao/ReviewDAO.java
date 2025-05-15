@@ -8,11 +8,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ReviewDAO {
 
-    private static final String SELECT_PROFILE_PICTURE = "SELECT profile_picture FROM users WHERE userId = ?";
 
     // Save a new review to the database
     public boolean saveReview(Review review) {
@@ -48,12 +48,40 @@ public class ReviewDAO {
                 review.setComment(rs.getString("comment"));
                 review.setBookId(rs.getInt("bookid"));
                 review.setUserId(rs.getInt("userId"));
+                review.setName(rs.getString("name"));
+                review.setProfilePicture(rs.getBytes("profile_picture"));
                 reviews.add(review);
                 System.out.println(review.getComment());
+                System.out.println(Arrays.toString(review.getProfilePicture()));
+                System.out.println(review.getName());
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return reviews;
     }
+
+    public byte[] getProfilePictureByReviewId(int reviewId) {
+        String sql = "SELECT u.profile_picture " +
+                "FROM review r " +
+                "JOIN users u ON r.userId = u.userId " +
+                "WHERE r.reviewId = ?";
+
+        try (Connection conn = DBConnection.getDbConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, reviewId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getBytes("profile_picture");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 }

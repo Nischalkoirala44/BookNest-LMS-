@@ -116,13 +116,12 @@ public class UserDAO {
                 user.setPassword(rs.getString("password"));
                 user.setAddress(rs.getString("address"));
                 user.setBio(rs.getString("bio"));
-
                 String roleStr = rs.getString("role");
                 if (roleStr != null) {
                     user.setRole(User.Role.valueOf(roleStr.toLowerCase()));
                 }
 
-                user.setProfilePicture(rs.getBytes("profile_picture")); // if needed
+                user.setProfilePicture(rs.getBytes("profile_picture"));
 
                 users.add(user);
             }

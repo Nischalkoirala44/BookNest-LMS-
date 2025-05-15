@@ -1,40 +1,44 @@
 package controller;
 
-import dao.UserDAO;
+import dao.ReviewDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
-@WebServlet("/ProfileImageServlet")
-public class ProfileImageServlet extends HttpServlet {
-    private UserDAO userDAO;
+@WebServlet("/ProfilePictureServlet")
+public class ReviewProfileServlet extends HttpServlet {
+
+    private ReviewDAO reviewDAO;
 
     @Override
     public void init() {
-        userDAO = new UserDAO();
+        reviewDAO = new ReviewDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String userIdStr = request.getParameter("userId");
+
+        String reviewIdStr = request.getParameter("reviewId");
+
         try {
-            int userId = Integer.parseInt(userIdStr);
-            byte[] imageData = userDAO.getProfilePicture(userId);
-            if (imageData != null) {
+            int reviewId = Integer.parseInt(reviewIdStr);
+            byte[] imageData = reviewDAO.getProfilePictureByReviewId(reviewId);
+
+            if (imageData != null && imageData.length > 0) {
                 response.setContentType("image/jpeg");
                 response.getOutputStream().write(imageData);
             } else {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Image not found");
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Profile picture not found");
             }
+
         } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid user ID");
-        } catch (SQLException e) {
-            throw new ServletException("Cannot retrieve profile image", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid review ID");
         }
     }
 }
