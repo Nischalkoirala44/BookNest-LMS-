@@ -1,56 +1,23 @@
 package model;
 
+import java.util.List;
+
 public class Review {
-
     private int reviewId;
-    private int rating;
-    private String comment;
-    private String reviewDate;
-    private boolean isBorrowed;
+    private String comment; // 🔧 Make this non-static!
+    private int bookId;
+    private int userId;
 
-    public Review() {
+    // Getters and setters
+    public int getReviewId() { return reviewId; }
+    public void setReviewId(int reviewId) { this.reviewId = reviewId; }
 
-    }
+    public String getComment() { return comment; }
+    public void setComment(String comment) { this.comment = comment; }
 
-    public Review(int reviewId, int rating, String comment, String reviewDate) {
-        this.reviewId = reviewId;
-        this.rating = rating;
-        this.comment = comment;
-        this.reviewDate = reviewDate;
-    }
+    public int getBookId() { return bookId; }
+    public void setBookId(int bookId) { this.bookId = bookId; }
 
-    public int getReviewId() {
-        return reviewId;
-    }
-    public void setReviewId(int reviewId) {
-        this.reviewId = reviewId;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public String getReviewDate() {
-        return reviewDate;
-    }
-
-    public boolean setIsBorrowed() {
-        return isBorrowed;
-    }
-    public void setIsBorrowed(boolean isBorrowed) {
-        this.isBorrowed = isBorrowed;
-    }
-    public void setReviewDate(String reviewDate) {
-        this.reviewDate = reviewDate;
-    }
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
 }

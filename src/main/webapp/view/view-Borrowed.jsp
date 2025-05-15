@@ -201,7 +201,6 @@
                 <input type="hidden" name="borrowId" value="<%= borrow.getBorrowId() %>" />
                 <button type="submit" class="return-button">Return</button>
             </form>
-
         </td>
     </tr>
     <%

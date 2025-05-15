@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="dao.BookDAO,model.Book,model.User,java.util.List,java.util.Objects" %>
+<%@ page import="model.Review" %>
 <%@ include file="nav-bar.jsp" %>
 
 <!DOCTYPE html>
@@ -25,7 +26,7 @@
             --border-color: #ddd;
             --status-available-bg: hsl(8, 100%, 95%);
             --status-available-text: hsl(8, 80%, 40%);
-            --status Lilly-bg: hsl(8, 20%, 95%);
+            --status-borrowed-bg: hsl(8, 20%, 95%);
             --status-borrowed-text: hsl(8, 80%, 50%);
         }
 
@@ -35,284 +36,6 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-
-        .navbar {
-            background-color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo h1 {
-            font-size: 24px;
-            color: var(--text-color);
-        }
-
-        .logo span {
-            color: var(--primary-color);
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            align-items: center;
-        }
-
-        .nav-links li {
-            margin-left: 30px;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-color);
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary-color);
-        }
-
-        .nav-links .active {
-            color: var(--primary-color);
-        }
-
-        .user-actions {
-            display: flex;
-            align-items: center;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 10px;
-            overflow: hidden;
-        }
-
-        .user-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        .user-name {
-            font-weight: 500;
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            width: 200px;
-            display: none;
-            z-index: 101;
-        }
-
-        .dropdown-menu.active {
-            display: block;
-        }
-
-        .dropdown-menu ul {
-            list-style: none;
-            padding: 10px 0;
-        }
-
-        .dropdown-menu li {
-            padding: 10px 20px;
-        }
-
-        .dropdown-menu a {
-            text-decoration: none;
-            color: var(--text-color);
-            display: block;
-        }
-
-        .dropdown-menu a:hover {
-            color: var(--primary-color);
-        }
-
-        .dropdown-menu .logout {
-            border-top: 1px solid var(--border-color);
-            margin-top: 5px;
-        }
-
-        .hamburger {
-            display: none;
-            font-size: 24px;
-            background: none;
-            border: none;
-            color: var(--text-color);
-            cursor: pointer;
-        }
-
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-
-        .modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background-color: white;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--light-text);
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .modal-footer {
-            padding: 15px 20px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .modal-footer button {
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-left: 10px;
-        }
-
-        .modal-footer button a {
-            text-decoration: none;
-            color: white;
-        }
-
-        .btn-secondary {
-            background-color: #f0f0f0;
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-        }
-
-        .profile-details {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 15px;
-        }
-
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            font-weight: bold;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        .profile-info {
-            margin-top: 20px;
-        }
-
-        .profile-info-item {
-            margin-bottom: 15px;
-        }
-
-        .profile-info-label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: var(--light-text);
-            font-size: 14px;
-        }
-
-        .profile-info-value {
-            font-size: 16px;
         }
 
         .main-content {
@@ -505,8 +228,8 @@
             cursor: not-allowed;
         }
 
-        .disabled-btn:hover {
-            background-color: #ccc;
+        .borrow-btn:hover:not(.disabled-btn) {
+            background-color: var(--primary-hover);
         }
 
         .pagination {
@@ -527,14 +250,13 @@
             transition: all 0.3s;
         }
 
-
-        .disabled-btn {
+        .pagination-btn.disabled {
             color: #6c757d;
             cursor: not-allowed;
             text-decoration: none;
         }
 
-        .pagination-btn:hover {
+        .pagination-btn:hover:not(.disabled) {
             background-color: var(--secondary-color);
         }
 
@@ -544,53 +266,140 @@
             border-color: var(--primary-color);
         }
 
-        @media (max-width: 768px) {
-            .nav-links {
+        /* Review Section Styles */
+        .review-section {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .review-toggle-btn, .view-reviews-btn {
+            display: inline-block;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .review-toggle-btn {
+            background-color: #2196F3;
+        }
+
+        .review-toggle-btn:hover {
+            background-color: #1976D2;
+        }
+
+        .view-reviews-btn {
+            background-color: #FF9800;
+        }
+
+        .view-reviews-btn:hover {
+            background-color: #F57C00;
+        }
+
+        .review-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .review-form textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .submit-review-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            align-self: flex-start;
+            transition: background-color 0.3s;
+        }
+
+        .submit-review-btn:hover {
+            background-color: #388E3C;
+        }
+
+        /* Reviews Modal Styles */
+        .review-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 0;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-author {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+
+        .review-comment {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .no-reviews {
+            font-size: 14px;
+            color: var(--light-text);
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            animation: slideIn 0.5s ease-in-out, fadeOut 0.5s ease-in-out 2.5s;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
                 display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background-color: white;
-                padding: 20px;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             }
+        }
 
-            .nav-links.active {
-                display: flex;
-            }
-
-            .nav-links li {
-                margin: 10px 0;
-            }
-
-            .hamburger {
-                display: block;
-            }
-
-            .profile-details {
-                grid-template-columns: 1fr;
-            }
-
-            .dropdown-menu {
-                width: 150px;
-            }
-
-            .search-bar {
-                flex-direction: column;
-            }
-
-            .search-input {
-                border-radius: 5px;
-                margin-bottom: 10px;
-            }
-
-            .search-btn {
-                border-radius: 5px;
-                padding: 10px;
-            }
-
+        @media (max-width: 768px) {
             .books-grid {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
@@ -662,200 +471,9 @@
             color: var(--light-text);
             font-size: 14px;
         }
-
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-
-        .modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background-color: white;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--light-text);
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .modal-footer {
-            padding: 15px 20px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .modal-footer button {
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-left: 10px;
-        }
-
-        .modal-footer button a {
-            text-decoration: none;
-            color: white;
-        }
-
-        .btn-secondary {
-            background-color: #f0f0f0;
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-        }
-
-        .profile-details {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 15px;
-        }
-
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            font-weight: bold;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        .profile-info {
-            margin-top: 20px;
-        }
-
-        .profile-info-item {
-            margin-bottom: 15px;
-        }
-
-        .profile-info-label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: var(--light-text);
-            font-size: 14px;
-        }
-
-        .profile-info-value {
-            font-size: 16px;
-        }
-
-        .main-content {
-            padding: 40px 0;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background-color: white;
-                padding: 20px;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .nav-links li {
-                margin: 10px 0;
-            }
-
-            .hamburger {
-                display: block;
-            }
-
-            .profile-details {
-                grid-template-columns: 1fr;
-            }
-
-            .dropdown-menu {
-                width: 150px;
-            }
-
-            .books-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-
-            .book-cover {
-                height: 200px;
-            }
-        }
-
-
     </style>
 </head>
 <body>
-
-
 <!-- Main Content -->
 <div class="main-content">
     <div class="container">
@@ -864,7 +482,10 @@
             <p>Browse through our collection of books</p>
         </div>
 
-
+        <!-- Success Message -->
+        <% if ("success".equals(request.getParameter("review"))) { %>
+        <div class="success-message" style="display: block;">Review submitted successfully!</div>
+        <% } %>
 
         <!-- Books Grid -->
         <div class="books-grid" id="booksGrid">
@@ -900,11 +521,21 @@
                         </span>
                         <form method="post" action="${pageContext.request.contextPath}/borrow" style="display: inline;">
                             <input type="hidden" name="bookId" value="<%= book.getBookId() %>">
-                            <input type="hidden" name="userId" value="<%= user.getUserId()%>">
+                            <input type="hidden" name="userId" value="<%= user.getUserId() %>">
                             <button type="submit" class="borrow-btn <%= isAvailable ? "" : "disabled-btn" %>"
                                     <%= isAvailable ? "" : "disabled" %>>
                                 Borrow
                             </button>
+                        </form>
+                    </div>
+                    <div class="review-section">
+                        <button type="button" class="review-toggle-btn" onclick="toggleReviewForm(<%= book.getBookId() %>, <%= user.getUserId() %>)">
+                            Write Review
+                        </button>
+                        <form method="get" action="${pageContext.request.contextPath}/ReviewServlet" style="display: inline;">
+                            <input type="hidden" name="bookId" value="<%= book.getBookId() %>">
+                            <input type="hidden" name="showModal" value="true">
+                            <button type="submit" class="view-reviews-btn">View Reviews</button>
                         </form>
                     </div>
                 </div>
@@ -922,7 +553,57 @@
 
         <!-- Pagination -->
         <div class="pagination" id="pagination">
+        </div>
+    </div>
+</div>
 
+<!-- Review Form Modal -->
+<div class="modal" id="reviewModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Write a Review</h2>
+            <button class="modal-close" onclick="closeReviewModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="reviewForm" method="post" action="${pageContext.request.contextPath}/submit-book-review" onsubmit="logFormSubmission()">
+                <input type="hidden" name="bookId" id="reviewBookId">
+                <input type="hidden" name="userId" id="reviewUserId">
+                <div class="review-form">
+                    <textarea name="comment" id="reviewComment" placeholder="Write your review here..." required></textarea>
+                    <button type="submit" class="submit-review-btn">Submit Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Reviews Modal -->
+<!-- Reviews Modal -->
+<div class="modal <%= request.getAttribute("showModal") != null && (Boolean)request.getAttribute("showModal") ? "active" : "" %>" id="reviewsModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Book Reviews</h2>
+            <form method="get" action="${pageContext.request.contextPath}/view/browse.jsp">
+                <button type="submit" class="modal-close">×</button>
+            </form>
+        </div>
+        <div class="modal-body" id="reviewsContent">
+            <%
+                List<model.Review> reviews = (List<model.Review>) request.getAttribute("reviews");
+                if (reviews != null && !reviews.isEmpty()) {
+                    for (model.Review review : reviews) {
+            %>
+            <div class="review-item">
+                <div class="review-comment"><%= review.getComment() != null ? review.getComment().replaceAll("[<>\"&]", "") : "" %></div>
+            </div>
+            <%
+                }
+            } else {
+            %>
+            <p class="no-reviews">No reviews found for this book.</p>
+            <%
+                }
+            %>
         </div>
     </div>
 </div>
@@ -974,170 +655,45 @@
     </div>
 </footer>
 
-<!-- Profile Modal -->
-<div class="modal" id="profileModal" role="dialog" aria-modal="true">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 class="modal-title">Profile</h2>
-            <button class="modal-close" aria-label="Close profile modal">×</button>
-        </div>
-        <div class="modal-body">
-            <div class="profile-details">
-                <% if (user != null) { %>
-                <div class="profile-avatar">
-                    <% if (user != null && user.getProfilePicture() != null && user.getProfilePicture().length > 0) { %>
-                    <img src='${pageContext.request.contextPath}/ProfileImageServlet?userId=<%= user.getUserId() %>' alt='Profile Image' />
-                    <% } else if (user != null) { %>
-                    <%= user.getName().charAt(0) %>
-                    <% } else { %>
-                    G
-                    <% } %>
-                </div>
-                <div class="profile-info">
-                    <div class="profile-info-item">
-                        <div class="profile-info-label">Name</div>
-                        <div class="profile-info-value"><%= user.getName() != null ? user.getName().replaceAll("[<>\"&]", "") : "N/A" %></div>
-                    </div>
-                    <div class="profile-info-item">
-                        <div class="profile-info-label">Email</div>
-                        <div class="profile-info-value"><%= user.getEmail() != null ? user.getEmail().replaceAll("[<>\"&]", "") : "N/A" %></div>
-                    </div>
-                    <div class="profile-info-item">
-                        <div class="profile-info-label">Bio</div>
-                        <div class="profile-info-value"><%= user.getBio() != null ? user.getBio().replaceAll("[<>\"&]", "") : "No bio provided" %></div>
-                    </div>
-                    <div class="profile-info-item">
-                        <div class="profile-info-label">Address</div>
-                        <div class="profile-info-value"><%= user.getAddress() != null ? user.getAddress().replaceAll("[<>\"&]", "") : "No address provided" %></div>
-                    </div>
-                </div>
-                <% } else { %>
-                <div class="profile-info">
-                    <div class="profile-info-item">
-                        <div class="profile-info-value">Please log in to view profile details.</div>
-                    </div>
-                </div>
-                <% } %>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-secondary modal-close-btn">Close</button>
-            <% if (user != null) { %>
-            <button class="btn-primary"><a href="editProfile.jsp">Edit Profile</a></button>
-            <% } %>
-        </div>
-    </div>
-</div>
-
+<!-- JavaScript for Modals and Logging -->
 <script>
-    // User Profile Dropdown Toggle
-    const userProfileToggle = document.getElementById('userProfileToggle');
-    const userDropdown = document.getElementById('userDropdown');
-    if (userProfileToggle && userDropdown) {
-        userProfileToggle.addEventListener('click', function(event) {
-            event.stopPropagation();
-            const isActive = userDropdown.classList.toggle('active');
-            userProfileToggle.setAttribute('aria-expanded', isActive);
-        });
+    function toggleReviewForm(bookId, userId) {
+        console.log('Opening review form for bookId: ' + bookId + ', userId: ' + userId);
+        document.getElementById('reviewBookId').value = bookId;
+        document.getElementById('reviewUserId').value = userId;
+        document.getElementById('reviewComment').value = '';
+        document.getElementById('reviewModal').classList.add('active');
     }
 
-    document.addEventListener('click', function(event) {
-        if (userDropdown && !userProfileToggle.contains(event.target) && !userDropdown.contains(event.target)) {
-            userDropdown.classList.remove('active');
-            userProfileToggle.setAttribute('aria-expanded', 'false');
-        }
-    });
-
-    // Hamburger Menu Toggle
-    const hamburger = document.querySelector('.hamburger');
-    const navLinks = document.querySelector('.nav-links');
-    if (hamburger && navLinks) {
-        hamburger.addEventListener('click', function() {
-            const isActive = navLinks.classList.toggle('active');
-            hamburger.setAttribute('aria-expanded', isActive);
-            hamburger.textContent = isActive ? '×' : '☰';
-        });
+    function closeReviewModal() {
+        document.getElementById('reviewModal').classList.remove('active');
     }
 
-    document.addEventListener('click', function(event) {
-        if (navLinks && hamburger && !navLinks.contains(event.target) && !hamburger.contains(event.target)) {
-            navLinks.classList.remove('active');
-            hamburger.setAttribute('aria-expanded', 'false');
-            hamburger.textContent = '☰';
-        }
-    });
-
-    // Modal Functionality
-    const profileModal = document.getElementById('profileModal');
-    const viewProfileBtn = document.getElementById('viewProfileBtn');
-    const modalCloseBtns = document.querySelectorAll('.modal-close, .modal-close-btn');
-
-    if (viewProfileBtn) {
-        viewProfileBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            profileModal.classList.add('active');
-            userDropdown.classList.remove('active');
-        });
+    function logFormSubmission() {
+        const form = document.getElementById('reviewForm');
+        const bookId = form.querySelector('#reviewBookId').value;
+        const userId = form.querySelector('#reviewUserId').value;
+        const comment = form.querySelector('#reviewComment').value;
+        console.log('Submitting review form for bookId: ' + bookId +
+            ', userId: ' + userId +
+            ', comment: ' + (comment ? comment.substring(0, 50) + '...' : 'empty'));
     }
 
-    modalCloseBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            profileModal.classList.remove('active');
-        });
-    });
+    function viewReviews(bookId) {
+        console.log('Opening reviews for bookId: ' + bookId);
+        const reviewsModal = document.getElementById('reviewsModal');
+        const reviewsContent = document.getElementById('reviewsContent');
 
-    profileModal.addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.classList.remove('active');
-        }
-    });
+        // Show the modal
+        reviewsModal.classList.add('active');
 
-    // Function to handle search
-    function searchBooks() {
-        const searchTerm = encodeURIComponent(document.getElementById('searchInput').value.trim());
-        const category = encodeURIComponent(document.getElementById('categoryFilter').value);
-        const availability = encodeURIComponent(document.getElementById('availabilityFilter').value);
-        const sort = encodeURIComponent(document.getElementById('sortFilter').value);
-        const contextPath = '<%= request.getContextPath() %>';
-        const url = `${contextPath}/searchBook?searchTerm=${searchTerm}&searchType=all&category=${category}&availability=${availability}&sort=${sort}`;
-        window.location.href = url;
+        // Fetch reviews via AJAX
+        fetchReviews(bookId, reviewsContent);
     }
 
-    // Initialize page
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchBtn = document.getElementById('searchBtn');
-        if (searchBtn) {
-            searchBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                searchBooks();
-            });
-        }
-
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.addEventListener('keyup', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    searchBooks();
-                }
-            });
-        }
-
-        const categoryFilter = document.getElementById('categoryFilter');
-        if (categoryFilter) {
-            categoryFilter.addEventListener('change', searchBooks);
-        }
-
-        const availabilityFilter = document.getElementById('availabilityFilter');
-        if (availabilityFilter) {
-            availabilityFilter.addEventListener('change', searchBooks);
-        }
-
-        const sortFilter = document.getElementById('sortFilter');
-        if (sortFilter) {
-            sortFilter.addEventListener('change', searchBooks);
-        }
-    });
+    function closeReviewsModal() {
+        document.getElementById('reviewsModal').classList.remove('active');
+    }
 </script>
 </body>
 </html>
