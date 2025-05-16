@@ -14,11 +14,14 @@ public class BorrowDAO {
             "INSERT INTO borrows (userId, bookid, borrow_date, due_date) VALUES (?, ?, ?, ?)";
 
     private static final String SELECT_ACTIVE_BY_USER =
-            "SELECT b.borrowId, b.userId, b.bookid, b.borrow_date, b.due_date, b.return_date, b.penalty, " +
+            "SELECT b.borrowId, b.userId, b.bookid, b.borrow_date, b.due_date, b.penalty, " +
                     "bk.title, bk.category, bk.author, bk.bookImage " +
                     "FROM borrows b " +
                     "JOIN book bk ON b.bookid = bk.bookid " +
-                    "WHERE b.userId = ? AND b.return_date IS NULL";
+                    "WHERE b.userId = ?";
+
+    private static final String SELECT_PENALTY_NOTIFICATIONS =
+            "SELECT borrowId, penalty FROM borrows WHERE userId = ? AND penalty > 0";
 
     public Borrow borrowBook(Borrow borrow) throws SQLException {
         System.out.println("BorrowDAO: Borrowing book for userId = " + borrow.getUserId() + ", bookId = " + borrow.getBookId());
@@ -61,7 +64,6 @@ public class BorrowDAO {
                     borrow.setBookId(rs.getInt("bookid"));
                     borrow.setBorrowDate(rs.getDate("borrow_date"));
                     borrow.setDueDate(rs.getDate("due_date"));
-                    borrow.setReturnDate(rs.getDate("return_date"));
                     borrow.setPenalty(rs.getDouble("penalty"));
 
                     Book book = new Book();
@@ -111,7 +113,6 @@ public class BorrowDAO {
                     borrow.setBookId(rs.getInt("bookid"));
                     borrow.setBorrowDate(rs.getDate("borrow_date"));
                     borrow.setDueDate(rs.getDate("due_date"));
-                    borrow.setReturnDate(rs.getDate("return_date"));
                     borrow.setPenalty(rs.getDouble("penalty"));
 
                     Book book = new Book();
@@ -161,4 +162,80 @@ public class BorrowDAO {
             System.out.println("BorrowDAO: Incremented totalCopies for bookId = " + bookId);
         }
     }
+
+    public void applyPenaltyForUser(int userId) {
+        String sql = "UPDATE borrows SET penalty = DATEDIFF(CURDATE(), due_date) * 100 " +
+                "WHERE userId = ? AND CURDATE() > due_date";
+
+        try (Connection conn = DBConnection.getDbConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            int rowsAffected = ps.executeUpdate();
+            System.out.println("Penalty applied to " + rowsAffected + " record(s) for userId = " + userId);
+
+        } catch (SQLException e) {
+            System.err.println("Error applying penalty for user: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public List<Borrow> getPenaltyNotifications(int userId) throws SQLException {
+        List<Borrow> penalties = new ArrayList<>();
+        try (Connection conn = DBConnection.getDbConnection();
+             PreparedStatement ps = conn.prepareStatement(SELECT_PENALTY_NOTIFICATIONS)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Borrow borrow = new Borrow();
+                    borrow.setBorrowId(rs.getInt("borrowId"));
+                    borrow.setPenalty(rs.getDouble("penalty"));
+                    penalties.add(borrow);
+                }
+            }
+        }
+        return penalties;
+    }
+
+
+    public List<Borrow> getAllDetailedBorrows() {
+        List<Borrow> borrowList = new ArrayList<>();
+        String sql = "SELECT b.borrowId, b.userId, b.bookid, b.borrow_date, b.due_date, " +
+                "u.name, bk.title, bk.author, bk.category " +
+                "FROM borrows b " +
+                "JOIN users u ON b.userId = u.userId " +
+                "JOIN book bk ON b.bookid = bk.bookid";
+
+        try (Connection conn = DBConnection.getDbConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Borrow borrow = new Borrow();
+                borrow.setBorrowId(rs.getInt("borrowId"));
+                borrow.setUserId(rs.getInt("userId"));
+                borrow.setBookId(rs.getInt("bookid"));
+                borrow.setBorrowDate(rs.getDate("borrow_date"));
+                borrow.setDueDate(rs.getDate("due_date"));
+                borrow.setName(rs.getString("name"));
+
+                Book book = new Book();
+                book.setBookId(rs.getInt("bookid"));
+                book.setTitle(rs.getString("title"));
+                book.setAuthor(rs.getString("author"));
+                book.setCategory(rs.getString("category"));
+
+                borrow.setBook(book);
+                borrowList.add(borrow);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return borrowList;
+    }
+
+
+
 }

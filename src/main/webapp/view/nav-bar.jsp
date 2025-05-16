@@ -378,6 +378,7 @@
                     <ul>
                         <li><a href="#" id="viewProfileBtn">View Profile</a></li>
                         <li><a href='${pageContext.request.contextPath}/view-borrowed?userId=<%= buser.getUserId() %>'>My Books</a></li>
+                        <li><a href="${pageContext.request.contextPath}/NotificationServlet?userId=<%= buser.getUserId() %>">Notification</a></li>
                         <li class="logout"><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
                     </ul>
                 </div>

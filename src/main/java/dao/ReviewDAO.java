@@ -30,7 +30,6 @@ public class ReviewDAO {
         }
     }
 
-    // Retrieve all reviews for a specific book by bookId
     public List<Review> getReviewsById(int bookId) {
         List<Review> reviews = new ArrayList<>();
         String sql = "SELECT r.reviewId, r.comment, r.bookid, r.userId, u.name, u.profile_picture " +

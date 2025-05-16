@@ -123,7 +123,7 @@
     <a href="${pageContext.request.contextPath}/view/adminPanel.jsp" class="active">Dashboard</a>
     <a href="${pageContext.request.contextPath}/view/books.jsp">Books</a>
     <a href="${pageContext.request.contextPath}/view/users.jsp">Users</a>
-    <a href="${pageContext.request.contextPath}/view/issued.jsp">Issued</a>
+    <a href="${pageContext.request.contextPath}/issuedBooks">Issued</a>
     <a href="${pageContext.request.contextPath}/view/register.jsp">Logout</a>
 </div>
 

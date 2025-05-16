@@ -1,3 +1,5 @@
+<%@ page import="model.Borrow" %>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -83,9 +85,14 @@
             background-color: #f7f9ff;
         }
 
-        .status-returned {
-            color: green;
-            font-weight: bold;
+        .penalty-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
         }
 
         .status-pending {
@@ -103,47 +110,49 @@
     <a href="${pageContext.request.contextPath}/view/adminPanel.jsp">Dashboard</a>
     <a href="${pageContext.request.contextPath}/view/books.jsp">Books</a>
     <a href="${pageContext.request.contextPath}/view/users.jsp">Users</a>
-    <a href="${pageContext.request.contextPath}/view/issued.jsp" class="active" >Issued</a>
+    <a href="${pageContext.request.contextPath}/issuedBooks" class="active" >Issued</a>
     <a href="${pageContext.request.contextPath}/view/register.jsp">Logout</a>
 </div>
 
 <div class="main">
-    <h1>📖 Issued Books</h1>
+    <h1>Issued Books</h1>
 
     <table>
         <tr>
             <th>User Name</th>
             <th>Book Title</th>
-            <th>Issued Date</th>
-            <th>Issued Time</th>
+            <th>Borrowed Date</th>
             <th>Deadline</th>
-            <th>Status</th>
+            <th>Action</th>
         </tr>
+
+        <%
+            List<Borrow> borrows = (List<Borrow>) request.getAttribute("borrowList");
+            if (borrows != null && !borrows.isEmpty()) {
+                for (Borrow b : borrows) {
+        %>
         <tr>
-            <td>Ram Bahadur</td>
-            <td>Java Programming</td>
-            <td>April 10, 2025</td>
-            <td>10:30 AM</td>
-            <td>April 25, 2025</td>
-            <td class="status-pending">Not Returned</td>
+            <td><%= b.getName() %></td>
+            <td><%= b.getBook().getTitle() %></td>
+            <td><%= b.getBorrowDate() %></td>
+            <td><%= b.getDueDate() %></td>
+            <td class="status-pending">
+                <form action="applyPenalty" method="post">
+                    <input type="hidden" name="userId" value="<%= b.getUserId() %>" />
+                    <button class="penalty-btn" type="submit">Apply Penalty</button>
+                </form>
+            </td>
         </tr>
-        <tr>
-            <td>Sita Kumari</td>
-            <td>Data Structures</td>
-            <td>April 5, 2025</td>
-            <td>2:00 PM</td>
-            <td>April 20, 2025</td>
-            <td class="status-returned">Returned</td>
-        </tr>
-        <tr>
-            <td>Hari Shrestha</td>
-            <td>Web Development Basics</td>
-            <td>April 12, 2025</td>
-            <td>9:45 AM</td>
-            <td>April 27, 2025</td>
-            <td class="status-pending">Not Returned</td>
-        </tr>
+        <%
+            }
+        } else {
+        %>
+        <tr><td colspan="5">No borrowed books found.</td></tr>
+        <%
+            }
+        %>
     </table>
+
 </div>
 </body>
 </html>
